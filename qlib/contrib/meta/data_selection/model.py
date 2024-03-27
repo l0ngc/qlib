@@ -137,7 +137,7 @@ class MetaModelDS(MetaTaskModel):
                 R.log_params(**{k: getattr(self, k)})
 
         # FIXME: get test tasks for just checking the performance
-        phases = ["test"]
+        phases = ["train", "test"]
         meta_tasks_l = meta_dataset.prepare_tasks(phases)
 
         if len(meta_tasks_l[1]):
