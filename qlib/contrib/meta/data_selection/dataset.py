@@ -18,11 +18,17 @@ from qlib.workflow import R
 from qlib.workflow.task.gen import RollingGen, task_generator
 from qlib.workflow.task.utils import TimeAdjuster
 from tqdm.auto import tqdm
-
+from pprint import pprint
 
 class InternalData:
     def __init__(self, task_tpl: dict, step: int, exp_name: str):
         self.task_tpl = task_tpl
+        
+        if(task_tpl['dataset']['class'] == 'TSDatasetH'):
+            task_tpl['dataset']['class'] = 'DatasetH'
+            del task_tpl['dataset']['kwargs']['step_len']
+        pprint(task_tpl)
+        
         self.step = step
         self.exp_name = exp_name
 
@@ -76,6 +82,7 @@ class InternalData:
         rg = RollingGen(step=self.step, test_key="train", train_key=None, task_copy_func=deepcopy_basic_type)
         gen_task = task_generator(perf_task_tpl, [rg])
 
+        # pprint(gen_task)
         recorders = R.list_recorders(experiment_name=self.exp_name)
         if len(gen_task) == len(recorders):
             get_module_logger("Internal Data").info("the data has been initialized")
@@ -154,6 +161,8 @@ class MetaTaskDS(MetaTask):
 
             # these three lines occupied 70% of the time of initializing MetaTaskDS
             d_train, d_test = ds.prepare(["train", "test"], col_set=["feature", "label"])
+            d_train = d_train.replace([np.inf, -np.inf], np.nan)
+            d_test = d_test.replace([np.inf, -np.inf], np.nan)            
             prev_size = d_test.shape[0]
             d_train = d_train.dropna(axis=0)
             d_test = d_test.dropna(axis=0)
