@@ -1,0 +1,125 @@
+On branch main
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    ../../benchmarks/ADARNN/README.md
+	deleted:    ../../benchmarks/ADARNN/requirements.txt
+	deleted:    ../../benchmarks/ADARNN/workflow_config_adarnn_Alpha360.yaml
+	deleted:    ../../benchmarks/ADD/README.md
+	deleted:    ../../benchmarks/ADD/requirements.txt
+	deleted:    ../../benchmarks/ADD/workflow_config_add_Alpha360.yaml
+	deleted:    ../../benchmarks/ALSTM/README.md
+	deleted:    ../../benchmarks/ALSTM/requirements.txt
+	deleted:    ../../benchmarks/ALSTM/workflow_config_alstm_Alpha158.yaml
+	deleted:    ../../benchmarks/ALSTM/workflow_config_alstm_Alpha360.yaml
+	deleted:    ../../benchmarks/CatBoost/README.md
+	deleted:    ../../benchmarks/CatBoost/requirements.txt
+	deleted:    ../../benchmarks/CatBoost/workflow_config_catboost_Alpha158.yaml
+	deleted:    ../../benchmarks/CatBoost/workflow_config_catboost_Alpha158_csi500.yaml
+	deleted:    ../../benchmarks/CatBoost/workflow_config_catboost_Alpha360.yaml
+	deleted:    ../../benchmarks/CatBoost/workflow_config_catboost_Alpha360_csi500.yaml
+	deleted:    ../../benchmarks/DoubleEnsemble/README.md
+	deleted:    ../../benchmarks/DoubleEnsemble/requirements.txt
+	deleted:    ../../benchmarks/DoubleEnsemble/workflow_config_doubleensemble_Alpha158.yaml
+	deleted:    ../../benchmarks/DoubleEnsemble/workflow_config_doubleensemble_Alpha158_csi500.yaml
+	deleted:    ../../benchmarks/DoubleEnsemble/workflow_config_doubleensemble_Alpha360.yaml
+	deleted:    ../../benchmarks/DoubleEnsemble/workflow_config_doubleensemble_Alpha360_csi500.yaml
+	deleted:    ../../benchmarks/DoubleEnsemble/workflow_config_doubleensemble_early_stop_Alpha158.yaml
+	deleted:    ../../benchmarks/GATs/README.md
+	deleted:    ../../benchmarks/GATs/requirements.txt
+	deleted:    ../../benchmarks/GATs/workflow_config_gats_Alpha158.yaml
+	deleted:    ../../benchmarks/GATs/workflow_config_gats_Alpha360.yaml
+	deleted:    ../../benchmarks/GRU/README.md
+	deleted:    ../../benchmarks/GRU/csi300_gru_ts.pkl
+	deleted:    ../../benchmarks/GRU/model_gru_csi300.pkl
+	deleted:    ../../benchmarks/GRU/requirements.txt
+	deleted:    ../../benchmarks/GRU/workflow_config_gru_Alpha158.yaml
+	deleted:    ../../benchmarks/GRU/workflow_config_gru_Alpha360.yaml
+	deleted:    ../../benchmarks/HIST/README.md
+	deleted:    ../../benchmarks/HIST/qlib_csi300_stock_index.npy
+	deleted:    ../../benchmarks/HIST/requirements.txt
+	deleted:    ../../benchmarks/HIST/workflow_config_hist_Alpha360.yaml
+	deleted:    ../../benchmarks/IGMTF/README.md
+	deleted:    ../../benchmarks/IGMTF/requirements.txt
+	deleted:    ../../benchmarks/IGMTF/workflow_config_igmtf_Alpha360.yaml
+	deleted:    ../../benchmarks/KRNN/README.md
+	deleted:    ../../benchmarks/KRNN/requirements.txt
+	deleted:    ../../benchmarks/KRNN/workflow_config_krnn_Alpha360.yaml
+	deleted:    ../../benchmarks/Localformer/README.md
+	deleted:    ../../benchmarks/Localformer/requirements.txt
+	deleted:    ../../benchmarks/Localformer/workflow_config_localformer_Alpha158.yaml
+	deleted:    ../../benchmarks/Localformer/workflow_config_localformer_Alpha360.yaml
+	deleted:    ../../benchmarks/SFM/README.md
+	deleted:    ../../benchmarks/SFM/requirements.txt
+	deleted:    ../../benchmarks/SFM/workflow_config_sfm_Alpha360.yaml
+	deleted:    ../../benchmarks/Sandwich/README.md
+	deleted:    ../../benchmarks/Sandwich/requirements.txt
+	deleted:    ../../benchmarks/Sandwich/workflow_config_sandwich_Alpha360.yaml
+	deleted:    ../../benchmarks/TCN/README.md
+	deleted:    ../../benchmarks/TCN/requirements.txt
+	deleted:    ../../benchmarks/TCN/workflow_config_tcn_Alpha158.yaml
+	deleted:    ../../benchmarks/TCN/workflow_config_tcn_Alpha360.yaml
+	deleted:    ../../benchmarks/TCTS/README.md
+	deleted:    ../../benchmarks/TCTS/requirements.txt
+	deleted:    ../../benchmarks/TCTS/workflow.png
+	deleted:    ../../benchmarks/TCTS/workflow_config_tcts_Alpha360.yaml
+	deleted:    ../../benchmarks/TFT/README.md
+	deleted:    ../../benchmarks/TFT/data_formatters/__init__.py
+	deleted:    ../../benchmarks/TFT/data_formatters/base.py
+	deleted:    ../../benchmarks/TFT/data_formatters/qlib_Alpha158.py
+	deleted:    ../../benchmarks/TFT/expt_settings/__init__.py
+	deleted:    ../../benchmarks/TFT/expt_settings/configs.py
+	deleted:    ../../benchmarks/TFT/libs/__init__.py
+	deleted:    ../../benchmarks/TFT/libs/hyperparam_opt.py
+	deleted:    ../../benchmarks/TFT/libs/tft_model.py
+	deleted:    ../../benchmarks/TFT/libs/utils.py
+	deleted:    ../../benchmarks/TFT/requirements.txt
+	deleted:    ../../benchmarks/TFT/tft.py
+	deleted:    ../../benchmarks/TFT/workflow_config_tft_Alpha158.yaml
+	deleted:    ../../benchmarks/TRA/README.md
+	deleted:    ../../benchmarks/TRA/Reports.ipynb
+	deleted:    ../../benchmarks/TRA/configs/config_alstm.yaml
+	deleted:    ../../benchmarks/TRA/configs/config_alstm_tra.yaml
+	deleted:    ../../benchmarks/TRA/configs/config_alstm_tra_init.yaml
+	deleted:    ../../benchmarks/TRA/configs/config_transformer.yaml
+	deleted:    ../../benchmarks/TRA/configs/config_transformer_tra.yaml
+	deleted:    ../../benchmarks/TRA/configs/config_transformer_tra_init.yaml
+	deleted:    ../../benchmarks/TRA/data/README.md
+	deleted:    ../../benchmarks/TRA/example.py
+	deleted:    ../../benchmarks/TRA/requirements.txt
+	deleted:    ../../benchmarks/TRA/run.sh
+	deleted:    ../../benchmarks/TRA/src/dataset.py
+	deleted:    ../../benchmarks/TRA/src/model.py
+	deleted:    ../../benchmarks/TRA/workflow_config_tra_Alpha158.yaml
+	deleted:    ../../benchmarks/TRA/workflow_config_tra_Alpha158_full.yaml
+	deleted:    ../../benchmarks/TRA/workflow_config_tra_Alpha360.yaml
+	deleted:    ../../benchmarks/TabNet/README.md
+	deleted:    ../../benchmarks/TabNet/requirements.txt
+	deleted:    ../../benchmarks/TabNet/workflow_config_TabNet_Alpha158.yaml
+	deleted:    ../../benchmarks/TabNet/workflow_config_TabNet_Alpha360.yaml
+	modified:   ../DDG-DA/workflow.py
+	modified:   README.md
+	modified:   ../../../qlib/contrib/meta/data_selection/dataset.py
+	modified:   ../../../qlib/contrib/model/pytorch_lstm.py
+	modified:   ../../../qlib/contrib/model/pytorch_lstm_ts.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../../dump_data/
+	../../benchmarks/LSTM/workflow_config_lstm_Alpha158_us.yaml
+	../../benchmarks/LSTM/workflow_config_lstm_Alpha360_us.yaml
+	../../benchmarks/LightGBM/workflow_config_lightgbm_Alpha158_us.yaml
+	../../benchmarks/Linear/workflow_config_linear_Alpha158_us.yaml
+	../../benchmarks/MLP/workflow_config_mlp_Alpha158_us.yaml
+	../../benchmarks/Transformer/workflow_config_transformer_Alpha158_us copy.yaml
+	../../benchmarks/Transformer/workflow_config_transformer_Alpha158_us.yaml
+	../../benchmarks/XGBoost/workflow_config_xgboost_Alpha158_us.yaml
+	../../benchmarks/backup/
+	../DDG-DA/workflow_us.py
+	rolling_benchmark_us.py
+	../../run_scripts/
+	../../us_day_res/
+	../../../opt_model/
+	../../../vis_result/plots/account_values_RR.png
+
+no changes added to commit (use "git add" and/or "git commit -a")

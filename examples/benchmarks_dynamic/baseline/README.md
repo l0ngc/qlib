@@ -14,3 +14,7 @@ For example, users can try `LightGBM` forecasting models by running the followin
     python rolling_benchmark.py --conf_path=workflow_config_lightgbm_Alpha158.yaml run
 
 ```
+
+
+
+python rolling_benchmark_us.py --conf_path=/16t-2/cl/project/qlib/examples/benchmarks/Linear/workflow_config_linear_Alpha158_us.yaml run

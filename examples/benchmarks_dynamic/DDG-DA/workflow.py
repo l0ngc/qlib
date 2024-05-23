@@ -4,10 +4,11 @@ from pathlib import Path
 from typing import Union
 
 import fire
-
+import qlib
 from qlib import auto_init
 from qlib.contrib.rolling.ddgda import DDGDA
 from qlib.tests.data import GetData
+from qlib.constant import REG_US, REG_CN
 
 DIRNAME = Path(__file__).absolute().resolve().parent
 BENCH_DIR = DIRNAME.parent / "baseline"
@@ -35,6 +36,8 @@ class DDGDABench(DDGDA):
 
 
 if __name__ == "__main__":
-    GetData().qlib_data(exists_skip=True)
-    auto_init()
+    # GetData().qlib_data(exists_skip=True)
+    # auto_init()
+    provider_uri = "~/.qlib/qlib_data/cn_data"  # target_dir
+    qlib.init(provider_uri=provider_uri, region=REG_CN)        
     fire.Fire(DDGDABench)
