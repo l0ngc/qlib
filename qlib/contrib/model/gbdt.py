@@ -35,9 +35,20 @@ class LGBModel(ModelFT, LightGBMFInt):
         for key in ["train", "valid"]:
             if key in dataset.segments:
                 df = dataset.prepare(key, col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
+                # 这里，支持TSDataset的数据转换
                 if df.empty:
                     raise ValueError("Empty data from dataset, please check your dataset config.")
-                x, y = df["feature"], df["label"]
+
+                def add_colname(df):
+                    multi_index_df = pd.concat([df.iloc[:, :158], df.iloc[:, 158]], axis=1, keys=['feature', 'label'])
+                    return multi_index_df
+
+                try:
+                    x, y = df["feature"], df["label"]
+                except NotImplementedError:
+                    df = add_colname(pd.DataFrame(df.data_arr)[:-1])
+                    x, y = df["feature"], df["label"]
+
 
                 # Lightgbm need 1D array as its label
                 if y.values.ndim == 2 and y.values.shape[1] == 1:
