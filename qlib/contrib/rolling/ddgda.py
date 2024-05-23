@@ -16,7 +16,7 @@ from qlib.typehint import Literal
 from qlib.utils import init_instance_by_config
 from qlib.workflow import R
 from qlib.workflow.task.utils import replace_task_handler_with_cache
-
+from pprint import pprint
 from .base import Rolling
 
 # LGBM is designed for feature importance & similarity
@@ -137,7 +137,10 @@ class DDGDA(Rolling):
 
         with R.start(experiment_name="feature_importance"):
             model = init_instance_by_config(task["model"])
-            dataset = init_instance_by_config(task["dataset"])
+            # dataset = init_instance_by_config(task["dataset"])
+            tmp_dataset = task["dataset"]
+            tmp_dataset['class'] = 'DatasetH'
+            dataset = init_instance_by_config(tmp_dataset)
             model.fit(dataset)
 
         fi = model.get_feature_importance()
@@ -162,9 +165,12 @@ class DDGDA(Rolling):
         task = self._adjust_task(self.basic_task(enable_handler_cache=False), self.sim_task_model)
         task = replace_task_handler_with_cache(task, self.working_dir)
 
-        dataset = init_instance_by_config(task["dataset"])
+        # dataset = init_instance_by_config(task["dataset"])
+        tmp_dataset = task["dataset"]
+        tmp_dataset['class'] = 'DatasetH'
+        dataset = init_instance_by_config(tmp_dataset)        
         prep_ds = dataset.prepare(slice(None), col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
-
+        pprint(col_selected)
         feature_df = prep_ds["feature"]
         label_df = prep_ds["label"]
 
