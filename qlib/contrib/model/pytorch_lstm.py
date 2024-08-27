@@ -116,7 +116,7 @@ class LSTM(Model):
             dropout=self.dropout,
         )
         if optimizer.lower() == "adam":
-            self.train_optimizer = optim.Adam(self.lstm_model.parameters(), lr=self.lr)
+            self.train_optimizer = optim.Adam(self.lstm_model.parameters(), lr=0.001)
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.lstm_model.parameters(), lr=self.lr)
         else:
@@ -270,6 +270,7 @@ class LSTM(Model):
         sample_num = x_values.shape[0]
         preds = []
 
+
         for begin in range(sample_num)[:: self.batch_size]:
             if sample_num - begin < self.batch_size:
                 end = sample_num
@@ -279,6 +280,16 @@ class LSTM(Model):
             with torch.no_grad():
                 pred = self.lstm_model(x_batch).detach().cpu().numpy()
             preds.append(pred)
+
+        try:
+            result = pd.Series(np.concatenate(preds), index=index)
+        except Exception as e:
+            # 在捕获异常时保存中间变量
+            x_test.to_pickle('/16t-2/cl/project/qlib/examples/us_day_res/x_test.pkl')  # 保存x_test变量
+            np.save('/16t-2/cl/project/qlib/examples/us_day_res/preds.npy', preds)  # 保存preds变量
+            np.save('/16t-2/cl/project/qlib/examples/us_day_res/index.npy', index)  # 保存index变量
+            # 重新抛出异常
+            raise e
 
         return pd.Series(np.concatenate(preds), index=index)
 

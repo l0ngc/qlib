@@ -15,7 +15,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-
+from pprint import pprint
 from ...model.base import Model
 from ...data.dataset.handler import DataHandlerLP
 from ...model.utils import ConcatDataset
@@ -121,7 +121,7 @@ class LSTM(Model):
             dropout=self.dropout,
         ).to(self.device)
         if optimizer.lower() == "adam":
-            self.train_optimizer = optim.Adam(self.LSTM_model.parameters(), lr=self.lr)
+            self.train_optimizer = optim.Adam(self.LSTM_model.parameters(), lr=float(self.lr))
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.LSTM_model.parameters(), lr=self.lr)
         else:
@@ -161,6 +161,12 @@ class LSTM(Model):
         self.LSTM_model.train()
 
         for data, weight in data_loader:
+            # 我好像懂了，这里是一个长度为30的序列，而不是直接的，所以会有差别，挺合理的，没毛病哥们儿
+            # pprint(f'feature shape{data[:, :, 0:-1].shape}')
+            # pprint(f'label shape{data[:, -1, -1].shape}')
+            # pprint(f'weight shape{weight.shape}')
+
+
             feature = data[:, :, 0:-1].to(self.device)
             label = data[:, -1, -1].to(self.device)
 
@@ -207,12 +213,30 @@ class LSTM(Model):
         dl_train.config(fillna_type="ffill+bfill")  # process nan brought by dataloader
         dl_valid.config(fillna_type="ffill+bfill")  # process nan brought by dataloader
 
+        # 所以这里输入数据
         if reweighter is None:
             wl_train = np.ones(len(dl_train))
             wl_valid = np.ones(len(dl_valid))
         elif isinstance(reweighter, Reweighter):
-            wl_train = reweighter.reweight(dl_train)
-            wl_valid = reweighter.reweight(dl_valid)
+            # 这里，可以给它做成一个dl_train，然后丢进去获得wl_train
+            # 把dl_traini转换成df，得到reweight，再根据index转换回来
+            def add_colname(df, df_index):
+                multi_index_df = pd.concat([df.iloc[:, :20], df.iloc[:, 20]], axis=1, keys=['feature', 'label'])
+                multi_index_df.index = df_index
+                return multi_index_df            
+            
+            new_df_train = add_colname(pd.DataFrame(dl_train.data_arr[:-1]), dl_train.data_index)
+            new_df_valid = add_colname(pd.DataFrame(dl_valid.data_arr[:-1]), dl_valid.data_index)
+
+            new_df_train = new_df_train.swaplevel().sort_index()
+            new_df_valid = new_df_valid.swaplevel().sort_index()
+
+            wl_train = reweighter.reweight(new_df_train)
+            wl_valid = reweighter.reweight(new_df_valid)
+
+            wl_train = wl_train.swaplevel().loc[dl_train.data_index]
+            wl_valid = wl_train.swaplevel().loc[dl_valid.data_index]
+
         else:
             raise ValueError("Unsupported reweighter type.")
 
