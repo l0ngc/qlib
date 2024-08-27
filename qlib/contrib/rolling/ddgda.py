@@ -18,6 +18,7 @@ from qlib.workflow import R
 from qlib.workflow.task.utils import replace_task_handler_with_cache
 from pprint import pprint
 from .base import Rolling
+from pprint import pprint
 
 # LGBM is designed for feature importance & similarity
 LGBM_MODEL = """
@@ -102,6 +103,9 @@ class DDGDA(Rolling):
         self.alpha = alpha
         self.meta_1st_train_end = meta_1st_train_end
         super().__init__(**kwargs)
+        print(f'ddgda step: {self.step}')
+        print(f'ddgda horizon: {self.horizon}')
+        self.step = 1
         self.working_dir = self.conf_path.parent if working_dir is None else Path(working_dir)
         self.proxy_hd = self.working_dir / "handler_proxy.pkl"
 
@@ -137,10 +141,10 @@ class DDGDA(Rolling):
 
         with R.start(experiment_name="feature_importance"):
             model = init_instance_by_config(task["model"])
-            # dataset = init_instance_by_config(task["dataset"])
-            tmp_dataset = task["dataset"]
-            tmp_dataset['class'] = 'DatasetH'
-            dataset = init_instance_by_config(tmp_dataset)
+            dataset = init_instance_by_config(task["dataset"])
+            # tmp_dataset = task["dataset"]
+            # tmp_dataset['class'] = 'DatasetH'
+            # dataset = init_instance_by_config(tmp_dataset)
             model.fit(dataset)
 
         fi = model.get_feature_importance()
@@ -165,10 +169,10 @@ class DDGDA(Rolling):
         task = self._adjust_task(self.basic_task(enable_handler_cache=False), self.sim_task_model)
         task = replace_task_handler_with_cache(task, self.working_dir)
 
-        # dataset = init_instance_by_config(task["dataset"])
-        tmp_dataset = task["dataset"]
-        tmp_dataset['class'] = 'DatasetH'
-        dataset = init_instance_by_config(tmp_dataset)        
+        dataset = init_instance_by_config(task["dataset"])
+        # tmp_dataset = task["dataset"]
+        # tmp_dataset['class'] = 'DatasetH'
+        # dataset = init_instance_by_config(tmp_dataset)        
         prep_ds = dataset.prepare(slice(None), col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
         pprint(col_selected)
         feature_df = prep_ds["feature"]
@@ -230,9 +234,16 @@ class DDGDA(Rolling):
         # - Only the dataset part is important, in current version of meta model will integrate the
 
         # the train_start for training meta model does not necessarily align with final rolling
-        train_start = "2008-01-01" if self.train_start is None else self.train_start
-        train_end = "2010-12-31" if self.meta_1st_train_end is None else self.meta_1st_train_end
-        test_start = (pd.Timestamp(train_end) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+        # train_start = "2008-01-01" if self.train_start is None else self.train_start
+        # train_end = "2010-12-31" if self.meta_1st_train_end is None else self.meta_1st_train_end
+        # test_start = (pd.Timestamp(train_end) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+
+        train_start = "2020-06-01 00:00:00"
+        train_end = "2020-11-01 00:00:00"
+        test_start = "2020-11-01 00:00:00"
+        test_end = "2020-12-01 00:00:00"
+
+
         proxy_forecast_model_task = {
             # "model": "qlib.contrib.model.linear.LinearModel",
             "dataset": {
@@ -241,12 +252,27 @@ class DDGDA(Rolling):
                     "handler": f"file://{(self.working_dir / self.proxy_hd).absolute()}",
                     "segments": {
                         "train": (train_start, train_end),
-                        "test": (test_start, self.basic_task()["dataset"]["kwargs"]["segments"]["test"][1]),
+                        "test": (test_start, test_end),
                     },
                 },
             },
             # "record": ["qlib.workflow.record_temp.SignalRecord"]
         }
+
+        # proxy_forecast_model_task = {
+        #     # "model": "qlib.contrib.model.linear.LinearModel",
+        #     "dataset": {
+        #         "class": "qlib.data.dataset.DatasetH",
+        #         "kwargs": {
+        #             "handler": f"file://{(self.working_dir / self.proxy_hd).absolute()}",
+        #             "segments": {
+        #                 "train": (train_start, train_end),
+        #                 "test": (test_start, self.basic_task()["dataset"]["kwargs"]["segments"]["test"][1]),
+        #             },
+        #         },
+        #     },
+        #     # "record": ["qlib.workflow.record_temp.SignalRecord"]
+        # }
         # the proxy_forecast_model_task will be used to create meta tasks.
         # The test date of first task will be 2011-01-01. Each test segment will be about 20days
         # The tasks include all training tasks and test tasks.
@@ -257,7 +283,8 @@ class DDGDA(Rolling):
             step=self.step,
             segments=0.62,  # keep test period consistent with the dataset yaml
             trunc_days=1 + self.horizon,
-            hist_step_n=30,
+            # hist_step_n=30,
+            hist_step_n=2,
             fill_method=fill_method,
             rolling_ext_days=0,
         )
@@ -305,11 +332,18 @@ class DDGDA(Rolling):
         param = rec.list_params()
         trunc_days = int(param["trunc_days"])
         step = int(param["step"])
-        hist_step_n = int(param["hist_step_n"])
+        # hist_step_n = int(param["hist_step_n"])
+        hist_step_n = 480
         fill_method = param.get("fill_method", "max")
 
         task_l = super().get_task_list()
 
+        for t in task_l:
+            # tmp_start = t['dataset']['kwargs']['segments']['test'][1]
+            # tmp_end = t['dataset']['kwargs']['segments']['test'][1] + pd.DateOffset(days=1)
+            # t['dataset']['kwargs']['segments']['test'] = (tmp_start, tmp_end)
+            pprint(t)
+            
         # 2.2) create meta dataset for final dataset
         kwargs = dict(
             task_tpl=task_l,
