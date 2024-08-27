@@ -19,7 +19,7 @@ from qlib.workflow.record_temp import SignalRecord
 from qlib.workflow.task.collect import RecorderCollector
 from qlib.workflow.task.gen import RollingGen, task_generator
 from qlib.workflow.task.utils import replace_task_handler_with_cache
-
+from pprint import pprint
 
 class Rolling:
     """
@@ -176,12 +176,18 @@ class Rolling:
     def get_task_list(self) -> List[dict]:
         """return a batch of tasks for rolling."""
         task = self.basic_task()
+        pprint(task)
         task_l = task_generator(
-            task, RollingGen(step=self.step, trunc_days=self.horizon + 1)
+            task, RollingGen(step=self.step)
         )  # the last two days should be truncated to avoid information leakage
+        print('task list:')
         for t in task_l:
             # when we rolling tasks. No further analyis is needed.
             # analyis are postponed to the final ensemble.
+            tmp_start = t['dataset']['kwargs']['segments']['test'][1]
+            tmp_end = t['dataset']['kwargs']['segments']['test'][1] + pd.DateOffset(days=1)
+            t['dataset']['kwargs']['segments']['test'] = (tmp_start, tmp_end)
+            pprint(t)
             t["record"] = ["qlib.workflow.record_temp.SignalRecord"]
         return task_l
 
