@@ -31,6 +31,7 @@ class InternalData:
         
         self.step = step
         self.exp_name = exp_name
+        print(f'internal data step: {self.step}')
 
     def setup(self, trainer=TrainerR, trainer_kwargs={}):
         """
@@ -81,6 +82,12 @@ class InternalData:
         # treat the training segments as test to create the rolling tasks
         rg = RollingGen(step=self.step, test_key="train", train_key=None, task_copy_func=deepcopy_basic_type)
         gen_task = task_generator(perf_task_tpl, [rg])
+        # add one more day
+        for t in gen_task:
+            pprint(t)
+            tmp_start = t['dataset']['kwargs']['segments']['train'][1]
+            tmp_end = t['dataset']['kwargs']['segments']['train'][1] + pd.DateOffset(days=1)
+            t['dataset']['kwargs']['segments']['train'] = (tmp_start, tmp_end)
 
         # pprint(gen_task)
         recorders = R.list_recorders(experiment_name=self.exp_name)
@@ -302,8 +309,11 @@ class MetaDatasetDS(MetaTaskDataset):
 
         if isinstance(task_tpl, dict):
             rg = RollingGen(
-                step=step, trunc_days=trunc_days, task_copy_func=deepcopy_basic_type
-            )  # NOTE: trunc_days is very important !!!!
+                step=step, task_copy_func=deepcopy_basic_type
+            )  # NOTE: no trunc
+            # rg = RollingGen(
+            #     step=step, trunc_days=trunc_days, task_copy_func=deepcopy_basic_type
+            # )  # NOTE: trunc_days is very important !!!!
             task_iter = rg(task_tpl)
             if rolling_ext_days > 0:
                 self.ta = TimeAdjuster(future=True)
@@ -325,6 +335,11 @@ class MetaDatasetDS(MetaTaskDataset):
         logger.info(f"Example task for training meta model: {task_iter[0]}")
         for t in tqdm(task_iter, desc="creating meta tasks"):
             try:
+                pprint(t)
+                tmp_start = t['dataset']['kwargs']['segments']['test'][1]
+                tmp_end = t['dataset']['kwargs']['segments']['test'][1] + pd.DateOffset(days=1)
+                t['dataset']['kwargs']['segments']['test'] = (tmp_start, tmp_end)                
+                pprint(t)
                 self.meta_task_l.append(
                     MetaTaskDS(t, meta_info=self._prepare_meta_ipt(t), mode=task_mode, fill_method=fill_method)
                 )
@@ -366,6 +381,9 @@ class MetaDatasetDS(MetaTaskDataset):
         end = max(segs[k][1] for k in ("train", "valid") if k in segs)
         ic_df_avail = ic_df.loc[:end, pd.IndexSlice[:, :end]]
 
+        new_columns = pd.MultiIndex.from_tuples([(pd.to_datetime(date).strftime('%Y-%m-%d') + ' 09:30:00', pd.to_datetime(date).strftime('%Y-%m-%d') + ' 14:59:00') for date, date2 in ic_df_avail.columns])
+        ic_df_avail.columns = new_columns
+
         # meta data set focus on the **information** instead of preprocess
         # 1) filter the overlap info
         def mask_overlap(s):
@@ -376,7 +394,7 @@ class MetaDatasetDS(MetaTaskDataset):
             Approximately the diagnal + horizon length of data are masked.
             """
             start, end = s.name
-            end = get_date_by_shift(trading_date=end, shift=self.trunc_days - 1, future=True)
+            end = get_date_by_shift(trading_date=end, shift=self.trunc_days - 1, future=True, freq = 'min')
             return s.mask((s.index >= start) & (s.index <= end))
 
         ic_df_avail = ic_df_avail.apply(mask_overlap)  # apply to each col
